@@ -1,0 +1,12 @@
+version: "3.7"
+
+services:
+  # jupyterlab with pyspark
+  pyspark:
+    image: jupyter/pyspark-notebook:latest
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+    ports:
+      - "9999:8888"
+    volumes:
+      - C:/Users/Karol/OneDrive/Área de Trabalho/fiap_spark:/tmp/arquivos-fiap

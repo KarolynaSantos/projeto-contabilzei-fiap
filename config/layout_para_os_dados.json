@@ -1,0 +1,232 @@
+{
+    "estabelecimentos": [
+        {
+            "caminho_zip": "dados/estabelecimentos/",
+            "caminho_csv": "dados/estabelecimentos/csv",
+            "colunas": [
+                {
+                    "coluna": "cnpj_basico",
+                    "descricao": "N\u00daMERO BASE DE INSCRI\u00c7\u00c3O NO CNPJ (OITO PRIMEIROS D\u00cdGITOS DO CNPJ)."
+                },
+                {
+                    "coluna": "cnpj_ordem",
+                    "descricao": "N\u00daMERO DO ESTABELECIMENTO DE INSCRI\u00c7\u00c3O NO CNPJ (DO NONO AT\u00c9 O D\u00c9CIMO SEGUNDO D\u00cdGITO DO CNPJ)."
+                },
+                {
+                    "coluna": "cnpj_dv",
+                    "descricao": "D\u00cdGITO VERIFICADOR DO N\u00daMERO DE INSCRI\u00c7\u00c3O NO CNPJ (DOIS \u00daLTIMOS D\u00cdGITOS DO CNPJ)."
+                },
+                {
+                    "coluna": "identificador_matriz_filial",
+                    "descricao": "C\u00d3DIGO DO IDENTIFICADOR MATRIZ/FILIAL.",
+                    "de_para": [
+                        {
+                            "de": "1",
+                            "para": "MATRIZ"
+                        },
+                        {
+                            "de": "2",
+                            "para": "FILIAL"
+                        }
+                    ]
+                },
+                {
+                    "coluna": "nome_fantasia",
+                    "descricao": "CORRESPONDE AO NOME FANTASIA."
+                },
+                {
+                    "coluna": "situacao_cadastral",
+                    "descricao": "C\u00d3DIGO DA SITUA\u00c7\u00c3O CADASTRAL.",
+                    "de_para": [
+                        {
+                            "de": "01",
+                            "para": "NULA"
+                        },
+                        {
+                            "de": "02",
+                            "para": "ATIVA"
+                        },
+                        {
+                            "de": "03",
+                            "para": "SUSPENSA"
+                        },
+                        {
+                            "de": "04",
+                            "para": "INAPTA"
+                        },
+                        {
+                            "de": "08",
+                            "para": "BAIXADA"
+                        }
+                    ]
+                },
+                {
+                    "coluna": "data_situacao_cadastral",
+                    "descricao": "DATA DO EVENTO DA SITUA\u00c7\u00c3O CADASTRAL."
+                },
+                {
+                    "coluna": "motivo_situacao_cadastral",
+                    "descricao": "C\u00d3DIGO DO MOTIVO DA SITUA\u00c7\u00c3O CADASTRAL."
+                },
+                {
+                    "coluna": "nome_da_cidade_no_exterior",
+                    "descricao": "NOME DA CIDADE NO EXTERIOR."
+                },
+                {
+                    "coluna": "pais",
+                    "descricao": "C\u00d3DIGO DO PAIS."
+                },
+                {
+                    "coluna": "data_de_inicio_atividade",
+                    "descricao": "DATA DE IN\u00cdCIO DA ATIVIDADE."
+                },
+                {
+                    "coluna": "cnae_fiscal_principal",
+                    "descricao": "C\u00d3DIGO DA ATIVIDADE ECON\u00d4MICA PRINCIPAL DO ESTABELECIMENTO."
+                },
+                {
+                    "coluna": "cnae_fiscal_secundaria",
+                    "descricao": "C\u00d3DIGO DA(S) ATIVIDADE(S) ECON\u00d4MICA(S) SECUND\u00c1RIA(S) DO ESTABELECIMENTO ."
+                },
+                {
+                    "coluna": "tipo_de_logradouro",
+                    "descricao": "DESCRI\u00c7\u00c3O DO TIPO DE LOGRADOURO."
+                },
+                {
+                    "coluna": "logradouro",
+                    "descricao": "NOME DO LOGRADOURO ONDE SE LOCALIZA O ESTABELECIMENTO."
+                },
+                {
+                    "coluna": "numero",
+                    "descricao": "N\u00daMERO ONDE SE LOCALIZA O ESTABELECIMENTO. QUANDO N\u00c3O HOUVER PREENCHIMENTO DO N\u00daMERO HAVER\u00c1 'S/N'."
+                },
+                {
+                    "coluna": "complemento",
+                    "descricao": "COMPLEMENTO PARA O ENDERE\u00c7O DE LOCALIZA\u00c7\u00c3O DO ESTABELECIMENTO."
+                },
+                {
+                    "coluna": "bairro",
+                    "descricao": "BAIRRO ONDE SE LOCALIZA O ESTABELECIMENTO."
+                },
+                {
+                    "coluna": "cep",
+                    "descricao": "C\u00d3DIGO DE ENDERE\u00c7AMENTO POSTAL REFERENTE AO LOGRADOURO NO QUAL O ESTABELECIMENTO ESTA LOCALIZADO."
+                },
+                {
+                    "coluna": "uf",
+                    "descricao": "SIGLA DA UNIDADE DA FEDERA\u00c7\u00c3O EM QUE SE ENCONTRA O ESTABELECIMENTO."
+                },
+                {
+                    "coluna": "munic\u00edpio",
+                    "descricao": "C\u00d3DIGO DO MUNIC\u00cdPIO DE JURISDI\u00c7\u00c3O ONDE SE ENCONTRA O ESTABELECIMENTO."
+                },
+                {
+                    "coluna": "ddd_1",
+                    "descricao": "CONT\u00c9M O DDD 1."
+                },
+                {
+                    "coluna": "telefone_1",
+                    "descricao": "CONT\u00c9M O N\u00daMERO DO TELEFONE 1."
+                },
+                {
+                    "coluna": "ddd_2",
+                    "descricao": "CONT\u00c9M O DDD 2."
+                },
+                {
+                    "coluna": "telefone_2",
+                    "descricao": "CONT\u00c9M O N\u00daMERO DO TELEFONE 2."
+                },
+                {
+                    "coluna": "ddd_do_fax",
+                    "descricao": "CONT\u00c9M O DDD DO FAX."
+                },
+                {
+                    "coluna": "fax",
+                    "descricao": "CONT\u00c9M O N\u00daMERO DO FAX."
+                },
+                {
+                    "coluna": "correio_eletronico",
+                    "descricao": "CONT\u00c9M O E-MAIL DO CONTRIBUINTE."
+                },
+                {
+                    "coluna": "situacao_especial",
+                    "descricao": "SITUA\u00c7\u00c3O ESPECIAL DA EMPRESA."
+                },
+                {
+                    "coluna": "data_da_situacao_especial",
+                    "descricao": "DATA EM QUE A EMPRESA ENTROU EM SITUA\u00c7\u00c3O ESPECIAL."
+                }
+            ]
+        }
+    ],
+    "empresas": [
+        {
+            "caminho_zip": "dados/empresas/",
+            "caminho_csv": "dados/empresas/csv",
+            "colunas": [
+                {
+                    "coluna": "cnpj_basico",
+                    "descricao": "N\u00daMERO BASE DE INSCRI\u00c7\u00c3O NO CNPJ (OITO PRIMEIROS D\u00cdGITOS DO CNPJ)."
+                },
+                {
+                    "coluna": "razao_social_nome_empresarial",
+                    "descricao": "NOME EMPRESARIAL DA PESSOA JUR\u00cdDICA."
+                },
+                {
+                    "coluna": "natureza_juridica",
+                    "descricao": "C\u00d3DIGO DA NATUREZA JUR\u00cdDICA."
+                },
+                {
+                    "coluna": "qualificacao_do_responsavel",
+                    "descricao": "QUALIFICA\u00c7\u00c3O DA PESSOA F\u00cdSICA RESPONS\u00c1VEL PELA EMPRESA."
+                },
+                {
+                    "coluna": "capital_social_da_empresa",
+                    "descricao": "CAPITAL SOCIAL DA EMPRESA."
+                },
+                {
+                    "coluna": "porte_da_empresa",
+                    "descricao": "C\u00d3DIGO DO PORTE DA EMPRESA.",
+                    "de_para": [
+                        {
+                            "de": "00",
+                            "para": "N\u00c3O INFORMADO"
+                        },
+                        {
+                            "de": "01",
+                            "para": "MICRO EMPRESA"
+                        },
+                        {
+                            "de": "03",
+                            "para": "EMPRESA DE PEQUENO PORTE"
+                        },
+                        {
+                            "de": "05",
+                            "para": "DEMAIS"
+                        }
+                    ]
+                },
+                {
+                    "coluna": "ente_federativo_respons\u00e1vel",
+                    "descricao": "O ENTE FEDERATIVO RESPONS\u00c1VEL \u00c9 PREENCHIDO PARA OS CASOS DE \u00d3RG\u00c3OS E ENTIDADES DO GRUPO DE NATUREZA JUR\u00cdDICA 1XXX. PARA AS DEMAIS NATUREZAS, ESTE ATRIBUTO FICA EM BRANCO."
+                }
+            ]
+        }
+    ],
+    "cnaes": [
+        {
+            "caminho_zip": "dados/cnaes/",
+            "caminho_csv": "dados/cnaes/csv",
+            "colunas": [
+                {
+                    "coluna": "codigo",
+                    "descricao": "C\u00d3DIGO DA ATIVIDADE ECON\u00d4MICA"
+                },
+                {
+                    "coluna": "descricao",
+                    "descricao": "NOME DA ATIVIDADE ECON\u00d4MICA"
+                }
+            ]
+        }
+    ]
+}
