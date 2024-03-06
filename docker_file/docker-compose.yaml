@@ -9,4 +9,4 @@ services:
     ports:
       - "9999:8888"
     volumes:
-      - C:/Users/Karol/OneDrive/Área de Trabalho/fiap_spark:/tmp/arquivos-fiap
+      - caminho_local:/tmp/arquivos-fiap

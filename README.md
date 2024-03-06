@@ -1,2 +1,4 @@
 # projeto-contabilzei-fiap
-Repositório para o projeto da faculdade karol
+Esse projeto pode ser reproduzido na sua maquina, seguindo o seguinte passo a passo
+
+## 1 - Rodar o docker file
