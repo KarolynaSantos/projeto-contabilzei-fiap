@@ -69,13 +69,14 @@ df = (
     # Filtrando data, uf e situacao cadastral ativa do df
     .filter(
         (col('data_situacao_cadastral') >= '2023-01-01')
-        &(upper(col('uf')).isin('SP', 'RJ'))
+        &(upper(col('uf')).isin('SP'))
         &(col('situacao_cadastral') == 'ATIVA')
     )
     # Concatenando coluna de cnpj do df
     .withColumn('cnpj', concat(col('cnpj_basico'), col('cnpj_ordem'), col('cnpj_dv')))
     # Selecionando colunas
     .select(colunas_desejadas)
+    .limit(100000) #limitando df para uma poc
 )
 
 # escrevando o arquivo em parquet para usar no processo de empresas

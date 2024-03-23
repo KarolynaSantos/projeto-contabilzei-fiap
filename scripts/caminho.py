@@ -1,5 +1,5 @@
 import json 
-import os 
+import os
 import pymysql
 
 class ProjetoFiap():
@@ -34,6 +34,7 @@ class ProjetoFiap():
             with connection.cursor() as cursor:
                 # Criação do banco de dados
                 create_database_query = f"CREATE DATABASE IF NOT EXISTS {database}"
+
                 cursor.execute(create_database_query)
         
             # Confirmação das alterações
@@ -52,8 +53,8 @@ class ProjetoFiap():
             valor = valores[1].strip()
         
             os.environ[chave] = valor
-
-
+        
+    
     def pega_cabecalho(self, chave):
 
         self.chave = chave
@@ -88,25 +89,27 @@ class ProjetoFiap():
             nome_novo = os.path.join(location, nome_novo)
             os.rename(nome_antigo, nome_novo)
 
-
     def salvar_no_banco(self, df, database, tabela):
 
         ProjetoFiap.credenciais(self.arquivo_credenciais)
         hostname = os.getenv("HOST-MYSQL")
         username = os.getenv("USER-MYSQL")
         password = os.getenv("PASSWORD-MYSQL")
+        port = os.getenv("PORT-MYSQL")
 
         ProjetoFiap.criar_database(database, hostname, username, password)
         
-        jdbc_url = f"jdbc:mysql://{hostname}/{database}?user={username}&password={password}"
 
         (
             df
             .write
             .format("jdbc")
-            .option("url", jdbc_url)
+            .option("url", f"jdbc:mysql://{hostname}:{port}/{database}?useUnicode=true&characterEncoding=UTF-8&useSSL=false") \
+            .option("driver", "com.mysql.jdbc.Driver")
             .option("dbtable", tabela)
-            .mode('overwrite')
+            .option("user", username)
+            .option("password", password)
+            .mode("overwrite")
             .save()
         )
 
