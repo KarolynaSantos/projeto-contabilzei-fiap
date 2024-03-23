@@ -3,7 +3,7 @@ from pyspark.sql.functions import *
 import os
 from caminho import ProjetoFiap
 
-pasta = 'estabelecimentos'
+pasta = 'cnaes'
 # Pegando nomes corretos do df
 bases = ProjetoFiap()
 cabecalhos = bases.pega_cabecalho(pasta) #trocar nome da pasta que contem os arquivos que quero tratar 
@@ -45,52 +45,7 @@ for coluna in depara.keys():
         para = linha['para']
 
         df = df.withColumn(coluna, when(col(coluna) == de, lit(para)).otherwise(col(coluna)))
-
-
-# Colunas desejadas
-colunas_desejadas = [
-    'cnpj'
-    ,'cnpj_basico'
-    ,'identificador_matriz_filial'
-    ,'situacao_cadastral'
-    ,'data_situacao_cadastral'
-    ,'data_de_inicio_atividade'
-    ,'cnae_fiscal_principal'
-    ,'uf'
-    ,'município'
-]
-
-#manipulando df
-
-df = (
-    df
-    # Ajustando coluna de data
-    .withColumn('data_situacao_cadastral', to_date(col('data_situacao_cadastral'), 'yyyyMMdd'))
-    # Filtrando data, uf e situacao cadastral ativa do df
-    .filter(
-        (col('data_situacao_cadastral') >= '2023-01-01')
-        &(upper(col('uf')).isin('SP', 'RJ'))
-        &(col('situacao_cadastral') == 'ATIVA')
-    )
-    # Concatenando coluna de cnpj do df
-    .withColumn('cnpj', concat(col('cnpj_basico'), col('cnpj_ordem'), col('cnpj_dv')))
-    # Selecionando colunas
-    .select(colunas_desejadas)
-)
-
-# escrevando o arquivo em parquet para usar no processo de empresas
-
-(
-    df
-    .write
-    .format('parquet')
-    .mode('overwrite')
-    .save(location_parquet)
-)
-
-del df 
-
-df = spark.read.format('parquet').load(location_parquet)
+        
 
 # Salvando dados no banco
-bases.salvar_no_banco(df, 'contabilizei', 'estabelecimentos')
+bases.salvar_no_banco(df, 'contabilizei', 'cnaes')

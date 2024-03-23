@@ -1,12 +1,19 @@
 version: "3.7"
 
 services:
-  # jupyterlab with pyspark
+  # JupyterLab with PySpark
   pyspark:
     image: jupyter/pyspark-notebook:latest
+    container_name: pyspark-container
     environment:
       JUPYTER_ENABLE_LAB: "yes"
     ports:
       - "9999:8888"
     volumes:
-      - caminho_local:/tmp/arquivos-fiap
+      - C:/Users/Karol/OneDrive/Documentos/FIAP/projeto-contabilzei-fiap:/tmp/arquivos-fiap
+    networks:
+      - FIAP
+
+networks:
+  FIAP:
+    external: true

@@ -17,6 +17,7 @@ location_estab = location.replace('/empresas/csv/', '/estabelecimentos/parquet/'
 spark = (SparkSession
         .builder
         .appName(pasta)
+        .config("spark.driver.extraClassPath", bases.caminho_jar_mysql)
         .getOrCreate()
         )
 
@@ -74,6 +75,9 @@ df_join = (
     .join(df_estab, col('empresas.cnpj_basico') == col('estab.cnpj_basico'), 'inner')
     .select(colunas_desejadas)
 )
+
+# Salvando dados no banco
+bases.salvar_no_banco(df_join, 'contabilizei', 'empresas')
 
 # apagando arquivos parquet
 for x in os.listdir(location_estab):
