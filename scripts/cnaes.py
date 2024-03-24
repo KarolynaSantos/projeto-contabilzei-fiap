@@ -27,6 +27,7 @@ df = (
     .read
     .format('csv')
     .option("delimiter", ';')
+    .option("encoding", "ISO-8859-1")
     .load(location)
 )
 
