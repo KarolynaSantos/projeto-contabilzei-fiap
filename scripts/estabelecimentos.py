@@ -77,7 +77,7 @@ df = (
     .withColumn('cnpj', concat(col('cnpj_basico'), col('cnpj_ordem'), col('cnpj_dv')))
     # Selecionando colunas
     .select(colunas_desejadas)
-    .limit(100000) #limitando df para uma poc
+    .limit(10_000) #limitando df para uma poc
 )
 
 # escrevando o arquivo em parquet para usar no processo de empresas
