@@ -1,9 +1,12 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
+from pyspark.sql import Window
+from pyspark.sql import functions as F
 import os
 from caminho import ProjetoFiap
 
 pasta = 'estabelecimentos'
+chunk = 500
 # Pegando nomes corretos do df
 bases = ProjetoFiap()
 cabecalhos = bases.pega_cabecalho(pasta) #trocar nome da pasta que contem os arquivos que quero tratar 
@@ -63,6 +66,8 @@ colunas_desejadas = [
 
 #manipulando df
 
+cond_row_number = Window.orderBy(F.lit(1))
+
 df = (
     df
     # Ajustando coluna de data
@@ -77,22 +82,25 @@ df = (
     .withColumn('cnpj', concat(col('cnpj_basico'), col('cnpj_ordem'), col('cnpj_dv')))
     # Selecionando colunas
     .select(colunas_desejadas)
+    .withColumn("row_number", F.row_number().over(cond_row_number))
     .limit(10_000) #limitando df para uma poc
+    .cache()
 )
 
-# escrevando o arquivo em parquet para usar no processo de empresas
-
-(
-    df
-    .write
-    .format('parquet')
-    .mode('overwrite')
-    .save(location_parquet)
-)
-
-del df 
-
-df = spark.read.format('parquet').load(location_parquet)
+quantidade_de_linhas = df.count()
 
 # Salvando dados no banco
-bases.salvar_no_banco(df, 'contabilizei', 'estabelecimentos')
+
+voltas = 1
+for x in range(0, quantidade_de_linhas + 1, chunk):
+    inicio = x + 1
+    fim = inicio + chunk -1
+    if inicio < quantidade_de_linhas:
+        if voltas == 1:
+            modo = 'overwrite'
+        else:
+            modo = 'append'
+        voltas +=1
+        print(f'Salvando de {inicio} até {fim}: ',end='')
+        
+        bases.salvar_no_banco(df.filter(col('row_number').between(inicio, fim).drop('row_number')), 'contabilizei', 'estabelecimentos', modo)

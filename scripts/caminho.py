@@ -1,6 +1,7 @@
 import json 
 import os
 import pymysql
+from pyspark.sql import SparkSession
 
 class ProjetoFiap():
     
@@ -14,6 +15,13 @@ class ProjetoFiap():
             self.arquivo_json = json.load(f)
 
         caminho_credenciais = self.caminho_geral + 'config/credenciais.env'
+
+        self.spark = (SparkSession
+                .builder
+                .appName('def_apoio')
+                .config("spark.driver.extraClassPath", self.caminho_jar_mysql)
+                .getOrCreate()
+                )
 
         try:
             with open(caminho_credenciais, 'r', encoding="utf-8") as f:
@@ -39,7 +47,6 @@ class ProjetoFiap():
         
             # Confirmação das alterações
             connection.commit()
-            print(f"Banco de dados '{database}' criado com sucesso!")
         
         finally:
             # Fechamento da conexão
@@ -89,7 +96,7 @@ class ProjetoFiap():
             nome_novo = os.path.join(location, nome_novo)
             os.rename(nome_antigo, nome_novo)
 
-    def salvar_no_banco(self, df, database, tabela):
+    def salvar_no_banco(self, df, database, tabela, modo='overwrite'):
 
         ProjetoFiap.credenciais(self.arquivo_credenciais)
         hostname = os.getenv("HOST-MYSQL")
@@ -109,9 +116,34 @@ class ProjetoFiap():
             .option("dbtable", tabela)
             .option("user", username)
             .option("password", password)
-            .mode("overwrite")
+            .mode(modo)
             .save()
         )
 
         print(f'Tabela {tabela}, salva no banco')
+
+    def lendo_do_banco(self, database, tabela):
+
+        ProjetoFiap.credenciais(self.arquivo_credenciais)
+        hostname = os.getenv("HOST-MYSQL")
+        username = os.getenv("USER-MYSQL")
+        password = os.getenv("PASSWORD-MYSQL")
+        port = os.getenv("PORT-MYSQL")
+
+        ProjetoFiap.criar_database(database, hostname, username, password)
+        
+
+        df = (
+            self.spark
+            .read
+            .format("jdbc")
+            .option("url", f"jdbc:mysql://{hostname}:{port}/{database}?useUnicode=true&characterEncoding=UTF-8&useSSL=false")
+            .option("driver", "com.mysql.jdbc.Driver")
+            .option("dbtable", tabela)
+            .option("user", username)
+            .option("password", password)
+            .load()
+        )
+
+        return df
         

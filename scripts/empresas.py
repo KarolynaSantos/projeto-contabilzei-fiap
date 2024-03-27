@@ -11,7 +11,6 @@ cabecalhos = bases.pega_cabecalho(pasta) #trocar nome da pasta que contem os arq
 bases.ajustar_arquivos()
 
 location = bases.caminho_csv
-location_estab = location.replace('/empresas/csv/', '/estabelecimentos/parquet/')
 
 # iniciando sessao spark
 spark = (SparkSession
@@ -27,17 +26,11 @@ df = (
     .read
     .format('csv')
     .option("delimiter", ';')
-    .option("encoding", "ISO-8859-1")
     .load(location)
 )
 
 # lendo estabelecimentos tratados para fazer o join
-df_estab = (
-    spark
-    .read
-    .format('parquet')
-    .load(location_estab)
-)
+df_estab = bases.lendo_do_banco('contabilizei', 'estabelecimentos')
 
 # Pegando colunas do df
 colunas_antigas = df.columns
@@ -78,12 +71,4 @@ df_join = (
 )
 
 # Salvando dados no banco
-bases.salvar_no_banco(df_join, 'contabilizei', 'empresas')
-
-# apagando arquivos parquet
-for x in os.listdir(location_estab):
-    arquivo = os.path.join(location_estab, x)
-    os.remove(arquivo)
-
-# apagando pasta
-os.rmdir(location_estab)
+bases.salvar_no_banco(df_join, 'projeto_fiap', 'empresas')
