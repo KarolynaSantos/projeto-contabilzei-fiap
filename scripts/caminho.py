@@ -7,15 +7,21 @@ class ProjetoFiap():
     
     def __init__(self):
 
+        # Define o caminho geral onde estão localizados os arquivos
         self.caminho_geral = '/tmp/arquivos-fiap/'
+        # Caminho para o arquivo JSON que contém o layout dos dados
         caminho_json = self.caminho_geral + 'config/layout_para_os_dados.json'
+        # Caminho para o JAR do conector MySQL
         self.caminho_jar_mysql = self.caminho_geral + 'config/d84e8af7_2ed8_4573_9232_9493078f73c4-mysql_connector_java_8_0_13-4ac45.jar'
 
+        # Lê o arquivo JSON e carrega seu conteúdo em uma variável
         with open(caminho_json, 'r', encoding="utf-8") as f:
             self.arquivo_json = json.load(f)
 
+        # Caminho para o arquivo de credenciais
         caminho_credenciais = self.caminho_geral + 'config/credenciais.env'
 
+        # Cria uma sessão Spark
         self.spark = (SparkSession
                 .builder
                 .appName('def_apoio')
@@ -23,6 +29,7 @@ class ProjetoFiap():
                 .getOrCreate()
                 )
 
+         # Tenta abrir e ler o arquivo de credenciais
         try:
             with open(caminho_credenciais, 'r', encoding="utf-8") as f:
                 self.arquivo_credenciais = f.read()
@@ -40,7 +47,7 @@ class ProjetoFiap():
         
         try:
             with connection.cursor() as cursor:
-                # Criação do banco de dados
+                # Criação do banco de dados se não existir
                 create_database_query = f"CREATE DATABASE IF NOT EXISTS {database}"
 
                 cursor.execute(create_database_query)
@@ -54,24 +61,30 @@ class ProjetoFiap():
 
     @staticmethod
     def credenciais(arquivo):
+        # Itera sobre as linhas do arquivo de credenciais
         for linha in arquivo.split('\n'):
+            # Divide cada linha em chave e valor
             valores = linha.split('=')
-            chave = valores[0].strip()
-            valor = valores[1].strip()
+            chave = valores[0].strip() # Remove espaços em branco em excesso
+            valor = valores[1].strip() # Remove espaços em branco em excesso
         
+            # Define as variáveis de ambiente com as credenciais
             os.environ[chave] = valor
         
     
     def pega_cabecalho(self, chave):
+        # Obtém o caminho para o CSV com base na chave
 
         self.chave = chave
 
         self.caminho_csv = self.caminho_geral + f'dados/{self.chave}/csv/'
 
+        # Obtém as colunas do arquivo JSON
         colunas = [x['coluna'] for x in self.arquivo_json[chave][0]['colunas']]
         return colunas
 
     def pegar_depara(self):
+        # Obtém o mapeamento de colunas de_para do arquivo JSON
         dicionario = {}
         for x in self.arquivo_json[self.chave][0]['colunas']:
             if 'de_para' in x.keys():
@@ -82,13 +95,13 @@ class ProjetoFiap():
         return dicionario
 
     def ajustar_arquivos(self):
+        # Renomeia arquivos CSV em um diretório específico
         location = self.caminho_csv
         
         arquivos = os.listdir(location)
         
         for arquivo in arquivos:
             
-        
             nome_antigo = os.path.join(location, arquivo)
             nome_novo = arquivo.split('.')
             nome_novo[-1] = 'csv'
