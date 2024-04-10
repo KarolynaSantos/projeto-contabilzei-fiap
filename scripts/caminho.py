@@ -111,14 +111,16 @@ class ProjetoFiap():
 
     def salvar_no_banco(self, df, database, tabela, modo='overwrite'):
 
+        # Define as credenciais do banco de dados a partir das variáveis de ambiente
         ProjetoFiap.credenciais(self.arquivo_credenciais)
         hostname = os.getenv("HOST-MYSQL")
         username = os.getenv("USER-MYSQL")
         password = os.getenv("PASSWORD-MYSQL")
         port = os.getenv("PORT-MYSQL")
 
+        # Cria o banco de dados se não existir
         ProjetoFiap.criar_database(database, hostname, username, password)
-        
+        # Escreve o DataFrame no banco de dados MySQL
 
         (
             df
@@ -133,10 +135,12 @@ class ProjetoFiap():
             .save()
         )
 
+        # Imprime mensagem informando que a tabela foi salva no banco
         print(f'Tabela {tabela}, salva no banco')
 
     def lendo_do_banco(self, database, tabela):
 
+        # Define as credenciais do banco de dados a partir das variáveis de ambiente
         ProjetoFiap.credenciais(self.arquivo_credenciais)
         hostname = os.getenv("HOST-MYSQL")
         username = os.getenv("USER-MYSQL")

@@ -1,9 +1,17 @@
+#conector com banco de dados
 import mysql.connector
 import pandas as pd
 import os
 
+#visualizacao
+import pandas as pd
+import geopandas
+import streamlit as st
+import folium
+import plotly.express as px
+
 # Define o caminho para o arquivo credenciais.env que contém as credenciais
-caminho_cred = r'C:\Users\Karol\OneDrive\Documentos\FIAP\projeto-contabilzei-fiap\config\credenciais.env'
+caminho_cred = r'/tmp/arquivos-fiap/config/credenciais.env'
 
 # Abre o arquivo em modo de leitura ('r') e atribui-o ao identificador 'f'
 with open(caminho_cred, 'r') as f:
@@ -41,7 +49,20 @@ conn = mysql.connector.connect(
 cursor = conn.cursor()
 
 # Execute uma consulta SQL
-consulta_sql = "SELECT * FROM contabilizei.estabelecimentos"
+consulta_sql = """
+    SELECT 
+        estab.*, 
+        empresas.natureza_juridica,
+        empresas.capital_social_da_empresa,
+        empresas.porte_da_empresa,
+        cnaes.descricao
+    FROM 
+        contabilizei.estabelecimentos estab
+    JOIN 
+        contabilizei.empresas ON estab.cnpj_basico = empresas.cnpj_basico
+    JOIN 
+        contabilizei.cnaes ON cnaes.codigo = estab.cnae_fiscal_principal
+"""
 cursor.execute(consulta_sql)
 
 # Recupere os resultados e armazene-os em um DataFrame do Pandas
