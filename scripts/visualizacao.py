@@ -11,7 +11,9 @@ import folium
 import plotly.express as px
 
 # Define o caminho para o arquivo credenciais.env que contém as credenciais
-caminho_cred = r'/tmp/arquivos-fiap/config/credenciais.env'
+caminho_cred = r'C:/Users/Karol/OneDrive\Documentos/FIAP/projeto-contabilzei-fiap/config/credenciais.env'
+
+#r'/tmp/arquivos-fiap/config/credenciais.env'
 
 # Abre o arquivo em modo de leitura ('r') e atribui-o ao identificador 'f'
 with open(caminho_cred, 'r') as f:
@@ -75,3 +77,44 @@ print(df.head())
 # Feche a conexão
 cursor.close()
 conn.close()
+
+#INICIANDO DASHBOARD
+
+# título dashboard
+st.title('Dashboard Contabilizei')
+
+# Adicionando uma seção para visualizar os dados
+st.subheader('Visualização de Dados')
+
+# criando filtro de data
+df["data_situacao_cadastral"] = pd.to_datetime(df["data_situacao_cadastral"])
+df=df.sort_values("data_situacao_cadastral")
+
+df["month"] = df["data_situacao_cadastral"].apply(lambda x: str(x.year) + "-" + str(x.month))
+month = st.sidebar.selectbox("Mês", df["month"].unique())
+
+df.filtered = df[df['month'] == month]
+df.filtered
+
+# Divida a tela em duas colunas
+col1, col2 = st.columns(2)
+col3, col4, col5 = st.columns(3)
+
+# Adicionando grafico
+# Extrair o mês e o ano da coluna de data
+df['mes_ano'] = df['data_situacao_cadastral'].dt.strftime('%Y-%m')
+
+# Contar a quantidade de CNPJs por mês
+df_agrupado = df.groupby('mes_ano')['cnpj'].nunique().reset_index(name='quantidade')
+
+# Plotar o gráfico de barras
+fig = px.bar(df_agrupado, x='mes_ano', y='quantidade', labels={'mes_ano': 'Mês e Ano', 'quantidade': 'Quantidade de CNPJs'},
+             title='Quantidade de CNPJs por Mês e Ano')
+fig.update_xaxes(type='category')  # Define o eixo x como uma categoria
+col1.plotly_chart(fig)
+
+
+
+
+
+
