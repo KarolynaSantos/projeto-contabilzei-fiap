@@ -7,11 +7,11 @@ import io
 
 
 #visualizacao
-import pandas as pd
 import geopandas
 import streamlit as st
 import folium
 import plotly.express as px
+import numpy as np
 
 # ========================================================================================================================
 # Pegando dados do banco
@@ -145,14 +145,28 @@ conn.close()
 # ========================================================================================================================
 #INICIANDO DASHBOARD
 
+#palhetade cores
+cores = ['#00F7F7', '#00236A', '#F4F7FB']
+
 # Definindo o tamanho da tela
 st.set_page_config(layout="wide")
 
 # Carregando e exibindo a logo
-st.image("https://theme.zdassets.com/theme_assets/527873/d7addb22e6b934c69a805b22680038893c822101.png", width=200)
+st.image("https://theme.zdassets.com/theme_assets/527873/d7addb22e6b934c69a805b22680038893c822101.png", width=300)
 
-# título dashboard
-st.title('Dashboard Contabilizei')  
+# Definindo o título com a cor e tamanho desejados
+st.markdown(
+    f"""
+    <h1 style='color:#00236A; font-size:32px;'>Dashboard Analítico de Abertura de Empresas</h1>
+    """,
+    unsafe_allow_html=True
+)
+
+# Escrevendo uma linha em HTML para separar o titulo
+st.write("<hr>", unsafe_allow_html=True)
+
+# # título dashboard
+# st.title('Dashboard Analítico de Abertura de Empresas')  
 
 # criando filtro de data
 # df["data_situacao_cadastral"] = pd.to_datetime(df["data_situacao_cadastral"])
@@ -174,14 +188,33 @@ df_filtrado = df[df['denominacoes'] == opcao_selecionada]
 # st.write('Dataframe filtrado:', df_filtrado)
 
 # Dividindo a tela em duas colunas
-col1, col2 = st.columns(2)
-col3, col4, col5 = st.columns(3)
+col1, col2, col3 = st.columns(3)
+col4, col5 = st.columns(2)
+col6, col7 = st.columns(2)
 
-# ========================================================================================================================
 # Filtrando o dataframe com base na opção selecionada
 df_filtrado = df[df['denominacoes'] == opcao_selecionada]
 
-# Adicionando grafico 1 - Evolução Abertura CNPJ por Periodo
+# ========================================================================================================================
+# Adicionando grafico 1 - Média do Capital Social
+# Calcular a média do capital social
+media_capital = df_filtrado['capital_social_da_empresa'].mean()
+
+# Plotar o gráfico
+# Exibir a média do capital em uma caixa na col1
+col1.subheader("Média do Capital Social")
+col1.write(f"R$ {media_capital:.2f}")
+
+# ========================================================================================================================
+# Adicionando grafico 2 - Tempo Média de Abertura de CNPJ
+
+# Plotar o gráfico
+# Exibir a média do capital em uma caixa na col2
+col2.subheader("Tempo Médio Para Abrir Uma Empresal")
+col2.write("São Paulo (SP): 2 dias e 12 horas")
+
+# ========================================================================================================================
+# Adicionando grafico 4 - Evolução Abertura CNPJ por Periodo
 # Extraindo o mês e o ano da coluna de data
 df_filtrado['mes_ano'] = df_filtrado['data_situacao_cadastral'].dt.strftime('%Y-%m')
 
@@ -189,21 +222,33 @@ df_filtrado['mes_ano'] = df_filtrado['data_situacao_cadastral'].dt.strftime('%Y-
 df_agrupado = df_filtrado.groupby('mes_ano')['cnpj'].nunique().reset_index(name='quantidade')
 
 # Plotando o gráfico de barras
-fig = px.line(df_agrupado, x='mes_ano', y='quantidade', labels={'mes_ano': 'Data', 'quantidade': 'Quantidade de CNPJs'},
-             title='Evolução Abertura CNPJ por Periodo')
+fig = px.line(df_agrupado, x='mes_ano', y='quantidade', labels={'quantidade': 'Quantidade de CNPJs'},
+             title='Crescimento de Abertura de CNPJ',
+             color_discrete_sequence=cores)
 fig.update_xaxes(type='category')  # Define o eixo x como uma categoria
-col1.plotly_chart(fig)
+col4.plotly_chart(fig)
+
+# Escrevendo uma linha em HTML para separar os gráficos
+st.write("<hr>", unsafe_allow_html=True)
 
 # ========================================================================================================================
-# Adicionando grafico 2 - Média de Receita por Ramo de Atividade
-# Agrupando os dados pela coluna 'denominacoes' e calcular a média da coluna 'capital_social_da_empresa'
+# Adicionando grafico 5 - Média de Receita por Ramo de Atividade
+# Agrupando os dados pela coluna 'data' e calcular a média da coluna 'capital_social_da_empresa'
 df_media = df_filtrado.groupby('mes_ano')['capital_social_da_empresa'].mean().reset_index()
 
 # Plotando o gráfico de linha
+
 fig_2 = px.line(df_media, x='mes_ano', y='capital_social_da_empresa', 
-              labels={'mes_ano': 'Data', 'capital_social_da_empresa': 'Média do Capital Social da Empresa'},
-              title='Média do Capital Social da Empresa por Denominação')
+              labels={'capital_social_da_empresa': 'Média do Capital Social da Empresa'},
+              title='Média de Capital Social por Ramo de Atividade',
+              color_discrete_sequence=cores)
 fig_2.update_xaxes(type='category')  # Define o eixo x como uma categoria
 
-# Plotar o gráfico na col2
-col2.plotly_chart(fig_2)
+col5.plotly_chart(fig_2)
+
+# ========================================================================================================================
+# Adicionando grafico 6 - Média de Receita por Sub Ramo de Atividade
+
+# # Agrupando os dados pela coluna 'cnaes.descricao' e calcular a média da coluna 'capital_social_da_empresa'
+# df_capital = df_filtrado.groupby('cnaes.descricao')['capital_social_da_empresa'].mean().reset_index()
+
