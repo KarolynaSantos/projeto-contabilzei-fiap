@@ -10,6 +10,7 @@ import io
 import streamlit as st
 import plotly.express as px
 import numpy as np
+import matplotlib.pyplot as plt
 
 # ========================================================================================================================
 # Pegando dados do banco
@@ -109,29 +110,26 @@ df_s3 = pd.DataFrame(novas_denominacoes)
 # ========================================================================================================================
 # Juntando df_sql com df_s3
 
-# Copiando a coluna 'cnae_fiscal_principal' de df_sql para um novo dataframe
-df_sql_join = df_sql[['cnae_fiscal_principal']].copy()
+# Copiando df_sql para um novo dataframe
+df_sql_join = df_sql.copy()
 
-# Extraia os dois primeiros dígitos da coluna 'cnae_fiscal_principal' e transforme em inteiros
-df_sql_join['divisoes'] = df_sql_join['cnae_fiscal_principal'].astype(str).str[:2].astype(int)
+# Extraindo os dois primeiros dígitos da coluna 'cnae_fiscal_principal' e transformando em inteiros
+df_sql_join['divisoes_'] = df_sql_join['cnae_fiscal_principal'].astype(str).str[:2].astype(int)
 
-# Realize o join entre df_sql_join e df_s3 usando a coluna 'divisoes'
-df_final = pd.merge(df_sql_join, df_s3, on='divisoes', how='inner')
-
-# Adicione todas as colunas do df_sql ao df_final
-df_final = pd.concat([df_sql, df_final.drop(columns=['divisoes'])], axis=1)
+# Realizando o join entre df_sql_join e df_s3 usando a coluna 'divisoes'
+df_final = pd.merge(df_sql_join, df_s3, left_on='divisoes_', right_on='divisoes', how='inner')
 
 # Atribua o resultado ao DataFrame df
 df = df_final
 
 # ========================================================================================================================
-# Converte a coluna 'data_situacao_cadastral' para datetime
+# Convertendo a coluna 'data_situacao_cadastral' para datetime
 df['data_situacao_cadastral'] = pd.to_datetime(df['data_situacao_cadastral'])
 
-# Remover caracteres não numéricos da coluna 'capital_social_da_empresa'
+# Removendo caracteres não numéricos da coluna 'capital_social_da_empresa'
 df['capital_social_da_empresa'] = df['capital_social_da_empresa'].str.replace(',', '')
 
-# Converter para tipo inteiro
+# Convertendo para tipo inteiro
 df['capital_social_da_empresa'] = df['capital_social_da_empresa'].astype(float)
 
 # Feche a conexão
@@ -153,7 +151,7 @@ st.image("https://theme.zdassets.com/theme_assets/527873/d7addb22e6b934c69a805b2
 # Definindo o título com a cor e tamanho desejados
 st.markdown(
     f"""
-    <h1 style='color:#00236A; font-size:32px;'>Dashboard Analítico de Abertura de Empresas</h1>
+    <h1 style='color:#00236A; font-size:32px;'>Dashboard Analítico de Abertura de Empresas no Estado de São Paulo</h1>
     """,
     unsafe_allow_html=True
 )
@@ -197,33 +195,30 @@ col1.write(f"R$ {media_capital:.2f}")
 import requests
 from bs4 import BeautifulSoup
 
-# URL da página que você quer extrair a informação
+# URL da página para extrair a informação
 url = "https://www.contabilizei.com.br/contabilidade-online/quanto-tempo-leva-para-abrir-uma-empresa/?utm_device=c&utm_term=&utm_source=google&utm_medium=cpc&utm_campaign=%5BMAX%5D_Performance_RMKT_Vendas&hsa_cam=20859898068&hsa_grp=&hsa_mt=&hsa_src=x&hsa_ad=&hsa_acc=1466761651&hsa_net=adwords&hsa_kw=&hsa_tgt=&hsa_ver=3&gad_source=1&gclid=Cj0KCQjwlN6wBhCcARIsAKZvD5jvTi4-tapqzrFGQbO54HZ98-j-14qVGzmvx8epFYjzrqiXfiv2HXwaAm_rEALw_wcB#quanto-tempo-demora-para-abrir-uma-empresa"
 
 # Fazendo a requisição HTTP para obter o conteúdo da página
 response = requests.get(url)
 
-# Verifica se a requisição foi bem-sucedida (código de status 200)
+# Verificando se a requisição foi bem-sucedida (código de status 200)
 if response.status_code == 200:
     # Faz o parsing do HTML da página
     soup = BeautifulSoup(response.text, 'html.parser')
     
     # Encontra o elemento que contém a informação desejada
     elemento = soup.find(text=lambda text: "São Paulo (SP):" in str(text))
-    
-    # Se o elemento for encontrado, imprime o texto
-    if elemento:
-        print(elemento.strip())  # Remove espaços em branco em excesso
-    else:
-        print("Informação não encontrada.")
 else:
     # Se a requisição falhar, imprime uma mensagem de erro
     print("Falha ao acessar a página:", response.status_code)
 
-# Plotar o gráfico
-# Exibir a média do capital em uma caixa na col2
+# Plotando o gráfico
+# Exibindo a média do capital em uma caixa na col2
 col2.subheader("Tempo Médio Para Abrir Uma Empresal")
 col2.write(elemento)
+
+# ========================================================================================================================
+# Adicionando grafico 3 
 
 # ========================================================================================================================
 # Adicionando grafico 4 - Evolução Abertura CNPJ por Periodo
@@ -259,10 +254,30 @@ fig_2.update_xaxes(type='category')  # Define o eixo x como uma categoria
 col5.plotly_chart(fig_2)
 
 # ========================================================================================================================
-# Adicionando grafico 6 - Média de Receita por Sub Ramo de Atividade
-
-# Agrupando os dados pela coluna 'descricao' e calculando a média da coluna 'capital_social_da_empresa'
+# Agrupando os dados pela coluna 'CNAE (Descrição)' e calculando a média da coluna 'Média Capital Social'
 df_capital = df_filtrado.groupby('descricao')['capital_social_da_empresa'].mean().reset_index()
 
-# Exibindo a tabela
+# Renomeando as colunas
+df_capital.rename(columns={'descricao': 'CNAE (Descrição)', 'capital_social_da_empresa': 'Média Capital Social'}, inplace=True)
+
+# Exibindo a tabela sem o índice
 col6.write(df_capital)
+
+# ========================================================================================================================
+# Grafico 7 -  Exibir documentos
+
+col7.subheader("Documentos necessários para abrir uma empresa são:")
+col7.write("""
+- Cópia autenticada do RG;
+- Cópia simples do CPF;
+- Certidão de casamento (se for casado);
+- Carteira do órgão regulamentador (como OAB, CRA, CREA, CORE, entre outros);
+- Cópia simples do comprovante de endereço residencial; 
+- Última declaração do IR (Imposto de Renda).
+
+Já os documentos da futura empresa são:
+- Cópia simples do comprovante de endereço comercial onde será a sede da empresa (se for diferente do endereço residencial);
+- Cópia do IPTU (Imposto Predial e Territorial Urbano) ou de outro documento que conste a Inscrição Imobiliária, ou Indicação Fiscal do imóvel que irá abrigar o estabelecimento;  
+- Atividades da empresa;  
+- Nome fantasia da empresa.
+""")
