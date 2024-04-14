@@ -1,9 +1,7 @@
-# Pyspark e MySQL com Docker
+# Introdução
+O presente projeto tem como objetivo facilitar os estudos e práticas envolvendo o processamento de dados com PySpark em conjunto com MySQL, utilizando contêineres Docker para criar um ambiente localmente. A integração dessas tecnologias permite a análise e manipulação eficiente de grandes volumes de dados, fornecendo uma base sólida para desenvolver aplicações de análise de dados em larga escala.
 
-Estou criando esse projetinho para ajudar com os estudos de pyspark junto a SQL localmente e sem muitas dificuldades. Para isso utilizei o Docker para rodar dois containers, o primeiro com pyspark e o segundo com MySQL.
-
-Abaixo um passo a passo de como configurar o Docker com os dois containers e deixar ambos na mesma rede para que possam se comunicar. 
-
+## Configuração do Ambiente Docker
 ### 1 - Criando docker network
 Uma Docker network é um recurso que permite a comunicação entre contêineres Docker e entre contêineres e o host ou outras redes externas. Ela fornece isolamento, segurança e controle sobre como os contêineres se comunicam entre si, permitindo a criação de ambientes complexos e distribuídos de forma eficiente.
 
@@ -48,4 +46,5 @@ Feito isso, acesso o container, pegue o token do notebook e use o jupyter no nav
 
 Para testar a conexão com o banco de dados utilize o Dbeaver (ou outro software de sua preferência). Em **Server Host** coloque **localhost**, **user** coloque **root** e **senha** coloque **hoot**. Com isso você poderá executar queries no banco MySQL.
 
+## Utilização dos Dados
 Para este projeto foram utilizados os dados de **cnaes**, **empresas** e **estabelecimentos** do site [Dados Abertos]( https://dados.gov.br/dados/conjuntos-dados/cadastro-nacional-da-pessoa-juridica---cnpj). A organização das pastas já está no git dentro de **dados**. Para reproduzir esse projeto (caso queira), basta baixar esses arquivos no site, colocar em suas respectivas pastas, extrair e deixar na pasta **csv**, não precisa converter para o formato csv pois o script já faz isso.
