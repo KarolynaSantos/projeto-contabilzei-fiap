@@ -1,10 +1,12 @@
+# Importações de bibliotecas necessárias
 import json 
 import os
 import pymysql
 from pyspark.sql import SparkSession
 
+# Classe para gerenciar operações relacionadas aos arquivos e banco de dados do projeto Fiap.
 class ProjetoFiap():
-    
+    #Inicializa a classe ProjetoFiap, configurando o caminho geral, carregando o layout dos dados a partir de um arquivo JSON e criando uma sessão Spark.
     def __init__(self):
 
         # Define o caminho geral onde estão localizados os arquivos
@@ -146,9 +148,8 @@ class ProjetoFiap():
         username = os.getenv("USER-MYSQL")
         password = os.getenv("PASSWORD-MYSQL")
         port = os.getenv("PORT-MYSQL")
-
+   
         ProjetoFiap.criar_database(database, hostname, username, password)
-        
 
         df = (
             self.spark

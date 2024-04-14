@@ -1,52 +1,48 @@
+# Importações de bibliotecas necessárias
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
+from caminho import ProjetoFiap  # Módulo personalizado para manipulação de caminhos
 import os
-from caminho import ProjetoFiap
 
+# Definição da pasta contendo os arquivos a serem processados
 pasta = 'cnaes'
-# Pegando nomes corretos do df
+
+# Inicialização do objeto ProjetoFiap para gerenciamento de caminhos e arquivos
 bases = ProjetoFiap()
-cabecalhos = bases.pega_cabecalho(pasta) #trocar nome da pasta que contem os arquivos que quero tratar 
-bases.ajustar_arquivos()
 
+# Obtendo cabeçalhos corretos para os arquivos da pasta especificada
+cabecalhos = bases.pega_cabecalho(pasta)
+bases.ajustar_arquivos()  # Ajustando arquivos conforme necessário
+
+# Caminho dos arquivos CSV e parquet
 location = bases.caminho_csv
+location_parquet = location.replace('/csv/', '/parquet/')
 
-location_parquet = location.replace('/csv/','/parquet/')
-
-# iniciando sessao spark
+# Inicialização da sessão Spark com configurações personalizadas
 spark = (SparkSession
-        .builder
-        .appName(pasta)
-        .config("spark.driver.extraClassPath", bases.caminho_jar_mysql)
-        .getOrCreate()
-        )
+         .builder
+         .appName(pasta)
+         .config("spark.driver.extraClassPath", bases.caminho_jar_mysql)
+         .getOrCreate())
 
-# Lendo arquivo csv com spark
-df = (
-    spark
-    .read
-    .format('csv')
-    .option("delimiter", ';')
-    .option("encoding", "ISO-8859-1")
-    .load(location)
-)
+# Leitura do arquivo CSV para um DataFrame Spark
+df = (spark.read.format('csv')
+      .option("delimiter", ';')
+      .option("encoding", "ISO-8859-1")
+      .load(location))
 
-# Pegando colunas do df
+# Renomeação das colunas do DataFrame conforme os cabeçalhos corretos
 colunas_antigas = df.columns
+for idx, cabecalho in enumerate(cabecalhos):
+    df = df.withColumnRenamed(df.columns[idx], cabecalho)
 
-# Renomeando os cabecalhos
-for x in range(len(cabecalhos)):
-    df = df.withColumnRenamed(colunas_antigas[x],cabecalhos[x])
-
-# ajustando depara
+# Aplicação de substituições baseadas em um dicionário de para cada coluna
 depara = bases.pegar_depara()
-for coluna in depara.keys():
-    for linha in depara[coluna]:
+for coluna, linhas in depara.items():
+    for linha in linhas:
         de = linha['de']
         para = linha['para']
-
         df = df.withColumn(coluna, when(col(coluna) == de, lit(para)).otherwise(col(coluna)))
-        
 
-# Salvando dados no banco
+# Salvamento dos dados resultantes no banco de dados
 bases.salvar_no_banco(df, 'contabilizei', 'cnaes')
