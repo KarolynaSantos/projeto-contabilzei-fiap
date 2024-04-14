@@ -267,6 +267,7 @@ col6.write(df_capital)
 
 # ========================================================================================================================
 # Grafico 6 -  Exibir documentos
+# Fonte Artigo "Documentação para abrir empresa: saiba o que é solicitado durante o proceso" do site [contabilizei](https://www.contabilizei.com.br/contabilidade-online/documentacao-para-abrir-empresa-saiba-o-que-e-solicitado-durante-o-processo/).
 
 col7.subheader("Documentos necessários para abrir uma empresa são:")
 col7.write("""
