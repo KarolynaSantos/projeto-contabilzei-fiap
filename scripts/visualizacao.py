@@ -5,12 +5,9 @@ import os
 import boto3
 import io
 
-
 #visualizacao
 import streamlit as st
 import plotly.express as px
-import numpy as np
-import matplotlib.pyplot as plt
 
 # ========================================================================================================================
 # Pegando dados do banco
@@ -172,7 +169,7 @@ df_filtrado = df[df['denominacoes'] == opcao_selecionada]
 # st.write('Dataframe filtrado:', df_filtrado)
 
 # Dividindo a tela em duas colunas
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 col4, col5 = st.columns(2)
 col6, col7 = st.columns(2)
 
@@ -218,10 +215,7 @@ col2.subheader("Tempo Médio Para Abrir Uma Empresal")
 col2.write(elemento)
 
 # ========================================================================================================================
-# Adicionando grafico 3 
-
-# ========================================================================================================================
-# Adicionando grafico 4 - Evolução Abertura CNPJ por Periodo
+# Adicionando grafico 3 - Evolução Abertura CNPJ por Periodo
 # Extraindo o mês e o ano da coluna de data
 df_filtrado['mes_ano'] = df_filtrado['data_situacao_cadastral'].dt.strftime('%Y-%m')
 
@@ -229,17 +223,22 @@ df_filtrado['mes_ano'] = df_filtrado['data_situacao_cadastral'].dt.strftime('%Y-
 df_agrupado = df_filtrado.groupby('mes_ano')['cnpj'].nunique().reset_index(name='quantidade')
 
 # Plotando o gráfico de barras
-fig = px.line(df_agrupado, x='mes_ano', y='quantidade', labels=None,
+fig = px.line(df_agrupado, x='mes_ano', y='quantidade', 
+             labels=None,
              title='Crescimento de Abertura de CNPJ',
              color_discrete_sequence=cores)
 fig.update_xaxes(type='category')  # Define o eixo x como uma categoria
+
+#Oculta os rotulos do eixo x e y
+fig.update_layout(xaxis_title=None, yaxis_title= None)
+
 col4.plotly_chart(fig)
 
 # Escrevendo uma linha em HTML para separar os gráficos
 st.write("<hr>", unsafe_allow_html=True)
 
 # ========================================================================================================================
-# Adicionando grafico 5 - Média de Receita por Ramo de Atividade
+# Adicionando grafico 4 - Média de Receita por Ramo de Atividade
 # Agrupando os dados pela coluna 'data' e calcular a média da coluna 'capital_social_da_empresa'
 df_media = df_filtrado.groupby('mes_ano')['capital_social_da_empresa'].mean().reset_index()
 
@@ -251,10 +250,13 @@ fig_2 = px.line(df_media, x='mes_ano', y='capital_social_da_empresa',
               color_discrete_sequence=cores)
 fig_2.update_xaxes(type='category')  # Define o eixo x como uma categoria
 
+#Oculta os rotulos do eixo x e y
+fig_2.update_layout(xaxis_title=None, yaxis_title= None)
+
 col5.plotly_chart(fig_2)
 
 # ========================================================================================================================
-# Agrupando os dados pela coluna 'CNAE (Descrição)' e calculando a média da coluna 'Média Capital Social'
+# Grafico 5 - Agrupando os dados pela coluna 'CNAE (Descrição)' e calculando a média da coluna 'Média Capital Social'
 df_capital = df_filtrado.groupby('descricao')['capital_social_da_empresa'].mean().reset_index()
 
 # Renomeando as colunas
@@ -264,7 +266,7 @@ df_capital.rename(columns={'descricao': 'CNAE (Descrição)', 'capital_social_da
 col6.write(df_capital)
 
 # ========================================================================================================================
-# Grafico 7 -  Exibir documentos
+# Grafico 6 -  Exibir documentos
 
 col7.subheader("Documentos necessários para abrir uma empresa são:")
 col7.write("""
