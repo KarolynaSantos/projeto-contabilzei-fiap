@@ -229,7 +229,7 @@ df_filtrado['mes_ano'] = df_filtrado['data_situacao_cadastral'].dt.strftime('%Y-
 df_agrupado = df_filtrado.groupby('mes_ano')['cnpj'].nunique().reset_index(name='quantidade')
 
 # Plotando o gráfico de barras
-fig = px.line(df_agrupado, x='mes_ano', y='quantidade', labels={'quantidade': 'Quantidade de CNPJs'},
+fig = px.line(df_agrupado, x='mes_ano', y='quantidade', labels=None,
              title='Crescimento de Abertura de CNPJ',
              color_discrete_sequence=cores)
 fig.update_xaxes(type='category')  # Define o eixo x como uma categoria
@@ -246,7 +246,7 @@ df_media = df_filtrado.groupby('mes_ano')['capital_social_da_empresa'].mean().re
 # Plotando o gráfico de linha
 
 fig_2 = px.line(df_media, x='mes_ano', y='capital_social_da_empresa', 
-              labels={'capital_social_da_empresa': 'Média do Capital Social da Empresa'},
+              labels=None,
               title='Média de Capital Social por Ramo de Atividade',
               color_discrete_sequence=cores)
 fig_2.update_xaxes(type='category')  # Define o eixo x como uma categoria
